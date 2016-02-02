@@ -64,7 +64,7 @@ consumer(void)
     CCNxPortalFactory *factory = setupConsumerFactory();
 
     CCNxPortal *portal =
-        ccnxPortalFactory_CreatePortal(factory, ccnxPortalRTA_Message, &ccnxPortalAttributes_Blocking);
+        ccnxPortalFactory_CreatePortal(factory, ccnxPortalRTA_Message);
 
     assertNotNull(portal, "Expected a non-null CCNxPortal pointer.");
     
@@ -75,9 +75,9 @@ consumer(void)
     for (int i = 0; i < 50000; i++) {
         CCNxMetaMessage *message = ccnxMetaMessage_CreateFromInterest(interest);
         
-        if (ccnxPortal_Send(portal, message)) {
+        if (ccnxPortal_Send(portal, message, CCNxStackTimeout_Never)) {
             while (ccnxPortal_IsError(portal) == false) {
-                CCNxMetaMessage *response = ccnxPortal_Receive(portal);
+                CCNxMetaMessage *response = ccnxPortal_Receive(portal, CCNxStackTimeout_Never);
                 if (response != NULL) {
                     if (ccnxMetaMessage_IsContentObject(response)) {
                         break;
