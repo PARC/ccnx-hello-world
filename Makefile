@@ -32,3 +32,9 @@ helloWorld_Producer: helloWorld_Producer.c config.h
 
 clean:
 	rm -rf ${EXECUTABLES}
+
+install:
+	@echo "HelloWorld doesn't have an install mode"
+
+check:
+	@echo "This module has no tests"
