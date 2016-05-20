@@ -19,7 +19,7 @@
 #include <ccnx/api/ccnx_Portal/ccnx_PortalRTA.h>
 
 #include <parc/security/parc_Security.h>
-#include <parc/security/parc_PublicKeySignerPkcs12Store.h>
+#include <parc/security/parc_Pkcs12KeyStore.h>
 #include <parc/security/parc_IdentityFile.h>
 
 #include <ccnx/common/ccnx_Name.h>
@@ -33,9 +33,9 @@ createAndGetIdentity(void)
     unsigned int validityDays = 30;
     char *subjectName = "producer";
 
-    bool success = parcPublicKeySignerPkcs12Store_CreateFile(keystoreName, keystorePassword, subjectName, keyLength, validityDays);
+    bool success = parcPkcs12KeyStore_CreateFile(keystoreName, keystorePassword, subjectName, keyLength, validityDays);
     assertTrue(success,
-               "parcPublicKeySignerPkcs12Store_CreateFile('%s', '%s', '%s', %d, %d) failed.",
+               "parcPkcs12KeyStore_CreateFile('%s', '%s', '%s', %d, %d) failed.",
                keystoreName, keystorePassword, subjectName, keyLength, validityDays);
 
     PARCIdentityFile *identityFile = parcIdentityFile_Create(keystoreName, keystorePassword);
@@ -79,9 +79,9 @@ producer(void)
     
     assertNotNull(portal, "Expected a non-null CCNxPortal pointer.");
 
-    CCNxName *listenName = ccnxName_CreateFromURI("lci:/Hello");
-    CCNxName *goodbye = ccnxName_CreateFromURI("lci:/Hello/Goodbye%21");
-    CCNxName *contentName = ccnxName_CreateFromURI("lci:/Hello/World");
+    CCNxName *listenName = ccnxName_CreateFromCString("lci:/Hello");
+    CCNxName *goodbye = ccnxName_CreateFromCString("lci:/Hello/Goodbye%21");
+    CCNxName *contentName = ccnxName_CreateFromCString("lci:/Hello/World");
 
     if (ccnxPortal_Listen(portal, listenName, 60 * 60 * 24 * 365, CCNxStackTimeout_Never)) {
         while (true) {
@@ -100,7 +100,7 @@ producer(void)
 
                     PARCBuffer *payload = makePayload();
 
-                    CCNxContentObject *contentObject = ccnxContentObject_CreateWithDataPayload(contentName, payload);
+                    CCNxContentObject *contentObject = ccnxContentObject_CreateWithNameAndPayload(contentName, payload);
 
                     CCNxMetaMessage *message = ccnxMetaMessage_CreateFromContentObject(contentObject);
 
