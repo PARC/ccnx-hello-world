@@ -19,7 +19,7 @@
 
 #include <parc/security/parc_Security.h>
 #include <parc/security/parc_IdentityFile.h>
-#include <parc/security/parc_PublicKeySignerPkcs12Store.h>
+#include <parc/security/parc_Pkcs12KeyStore.h>
 
 #include <parc/algol/parc_Memory.h>
 
@@ -34,9 +34,9 @@ createAndGetIdentity(void)
     unsigned int validityDays = 30;
     char *subjectName = "consumer";
 
-    bool success = parcPublicKeySignerPkcs12Store_CreateFile(keystoreName, keystorePassword, subjectName, keyLength, validityDays);
+    bool success = parcPkcs12KeyStore_CreateFile(keystoreName, keystorePassword, subjectName, keyLength, validityDays);
     assertTrue(success,
-               "parcPublicKeySignerPkcs12Store_CreateFile('%s', '%s', '%s', %d, %d) failed.",
+               "parcPkcs12KeyStore_CreateFile('%s', '%s', '%s', %d, %d) failed.",
                keystoreName, keystorePassword, subjectName, keyLength, validityDays);
 
     PARCIdentityFile *identityFile = parcIdentityFile_Create(keystoreName, keystorePassword);
@@ -68,7 +68,7 @@ consumer(void)
 
     assertNotNull(portal, "Expected a non-null CCNxPortal pointer.");
     
-    CCNxName *name = ccnxName_CreateFromURI("lci:/Hello/World");
+    CCNxName *name = ccnxName_CreateFromCString("lci:/Hello/World");
     CCNxInterest *interest = ccnxInterest_CreateSimple(name);
     ccnxName_Release(&name);
     
